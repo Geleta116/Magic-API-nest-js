@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { ZodValidationPipe } from 'src/common/middlewares/zod_validation_pipe';
 import { CreateUserDto, createUserSchema } from './dto/create-user.dto';
 import { LoginDto, LoginSchema } from './dto/login.dto';
-import { HttpExceptionFilter } from 'src/common/exception_filter';
+import { HttpExceptionFilter } from 'src/common/exceptions/exception_filter';
 
 @Controller('auth')
 // @UseFilters(new HttpExceptionFilter())

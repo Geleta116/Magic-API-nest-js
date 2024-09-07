@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, UseFilters } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ZodValidationPipe } from 'src/common/middlewares/zod_validation_pipe';
 import { CreateUserDto, createUserSchema } from './dto/create-user.dto';
 import { LoginDto, LoginSchema } from './dto/login.dto';
+import { HttpExceptionFilter } from 'src/common/exception_filter';
 
 @Controller('auth')
+// @UseFilters(new HttpExceptionFilter())
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @UsePipes(new ZodValidationPipe(createUserSchema))
@@ -19,8 +21,5 @@ export class AuthController {
   signin(@Body() loginDto: LoginDto) {
     return this.authService.signIn(loginDto);
   }
-
- 
- 
 
 }

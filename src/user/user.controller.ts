@@ -5,6 +5,8 @@ import { CreateUserDto } from '../auth/dto/create-user.dto';
 import { ZodValidationPipe } from 'src/common/middlewares/zod_validation_pipe';
 import { createUserSchema } from '../auth/dto/create-user.dto';
 import { AuthGuard } from 'src/common/guards/auth_guard';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { RolesGuard } from 'src/common/guards/roles_guard';
 
 @Controller('user')
 export class UserController {
@@ -22,12 +24,17 @@ export class UserController {
     return this.userService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+
+  @Patch(':id')
+  updatePassword(@Param('id') id: string, @Body() password: string) {
+    return this.userService.updatePassword(+id, password);
+  }
   
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

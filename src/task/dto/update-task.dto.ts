@@ -1,4 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTaskDto } from './create-task.dto';
+import { z } from 'zod';
 
-export class UpdateTaskDto extends PartialType(CreateTaskDto) {}
+export const UpdateTaskSchema = z.object({
+    title: z.string().optional(),
+    description: z.string().optional(),
+    due_date: z.date().optional()
+});
+
+export type UpdateTaskDto = z.infer<typeof UpdateTaskSchema>;

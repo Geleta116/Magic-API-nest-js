@@ -21,7 +21,8 @@ export class AuthService {
         data,
       });
       console.log(user)
-      const payload = { sub: user.id, email: user.email };
+      const user_roles = await this.getUserRole(user.id)
+      const payload = { sub: user.id, email: user.email , roles: user_roles};
       const token = await this.jwtService.signAsync(payload)
       return {
         access_token: token
@@ -45,7 +46,8 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException();
       }
-      const payload = { sub: user.id, email: user.email };
+      const user_roles = await this.getUserRole(user.id)
+      const payload = { sub: user.id, email: user.email , roles: user_roles};
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -54,4 +56,29 @@ export class AuthService {
       throw error
     }
   }
+
+  async getUserRole(user_id: number): Promise<string[]> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: user_id
+        },
+        include: {
+          roles: {
+            include: {
+              role: true
+            }
+          }
+        }
+      });
+      if (user && user.roles) {
+        const user_roles = user.roles.map((userRole) => userRole.role.name);
+        return user_roles;
+      }
+      return [];
+    } catch (error) {
+      throw error;
+    }
+  }
+  
 }

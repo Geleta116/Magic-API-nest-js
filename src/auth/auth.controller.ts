@@ -6,7 +6,6 @@ import { LoginDto, LoginSchema } from './dto/login.dto';
 import { HttpExceptionFilter } from 'src/common/exceptions/exception_filter';
 
 @Controller('auth')
-// @UseFilters(new HttpExceptionFilter())
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
@@ -21,5 +20,4 @@ export class AuthController {
   signin(@Body() loginDto: LoginDto) {
     return this.authService.signIn(loginDto);
   }
-
 }

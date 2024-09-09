@@ -5,10 +5,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
-import { STATUS_CODES } from 'http';
 
-
-const saltOrRounds = 10;
+const saltOrRounds = parseInt(process.env.SALT || '10');
 
 @Injectable()
 export class AuthService {

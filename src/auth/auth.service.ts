@@ -44,12 +44,12 @@ export class AuthService {
       const { email, password } = loginDto
       const user = await this.usersService.findByEmail(email);
       if (!user || !user.password) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Invalid email or password');
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException('Invalid email or password');
       }
       const user_roles = await this.getUserRole(user.id)
       const payload = { sub: user.id, email: user.email , roles: user_roles};

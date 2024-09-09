@@ -10,7 +10,6 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
   @UsePipes(new ZodValidationPipe(createTaskSchema))
   async create(@Body() createTaskDto: CreateTaskDto, @Req() request: Request) {
     const user = request['user']; 

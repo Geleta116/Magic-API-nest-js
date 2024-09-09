@@ -27,6 +27,7 @@ export class UserService {
 
   async findOne(id: number): Promise<UserModel | null> {
     try {
+      console.log(id)
       const user = await this.prisma.user.findFirst({
         where: { id: id },
         select: {
@@ -37,13 +38,15 @@ export class UserService {
         }
       });
 
+      console.log(user)
+
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found`);
       }
 
       return user;
     } catch (error) {
-      throw new Error(`Failed to find user with ID ${id}`);
+      throw error;
     }
   }
 
@@ -70,7 +73,7 @@ export class UserService {
         data: { ...updateUserDto }
       });
     } catch (error) {
-      throw new Error(`Failed to update user with ID ${id}`);
+      throw error;
     }
   }
 
@@ -88,7 +91,7 @@ export class UserService {
         data: { password: hash }
       });
     } catch (error) {
-      throw new Error(`Failed to update password for user with ID ${id}`);
+      throw error;
     }
   }
 
@@ -106,11 +109,12 @@ export class UserService {
         data: { password: hash }
       });
     } catch (error) {
-      throw new Error(`Failed to update password for user with ID ${id}`);
+      throw error;
     }
   }
 
   async remove(id: number): Promise<void> {
+   
     try {
 
       const existingUser = await this.findOne(id);
@@ -122,7 +126,7 @@ export class UserService {
         where: { id: id }
       });
     } catch (error) {
-      throw new Error(`Failed to delete user with ID ${id}`);
+      throw error;
     }
   }
 }

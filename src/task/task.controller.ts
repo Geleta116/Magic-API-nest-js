@@ -7,19 +7,21 @@ import { ZodValidationPipe } from 'src/common/middlewares/zod_validation_pipe';
 
 @Controller('todos')
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) { }
 
   @Post()
   @UsePipes(new ZodValidationPipe(createTaskSchema))
   async create(@Body() createTaskDto: CreateTaskDto, @Req() request: Request) {
-    const user = request['user']; 
+    const user = request['user'];
     const creator_id = user.sub;
     return this.taskService.create(creator_id, createTaskDto);
   }
 
   @Get()
-  async findAll() {
-    return this.taskService.findAll();
+  async findAll(@Req() request: Request) {
+    const user = request['user'];
+    const user_id = user.sub;
+    return this.taskService.findAll(user_id);
   }
 
   @Get(':id')
@@ -34,7 +36,10 @@ export class TaskController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    return this.taskService.remove(+id);
+  async remove(@Param('id') id: string, @Req() request: Request) {
+    const user = request['user'];
+    const user_id = user.sub;
+    const user_roles = user.roles
+    return this.taskService.remove(+id, user_roles, user_id);
   }
 }

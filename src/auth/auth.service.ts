@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Prisma, User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { LoginDto } from './dto/login.dto';
+import { STATUS_CODES } from 'http';
 
 
 const saltOrRounds = 10;
@@ -17,10 +18,14 @@ export class AuthService {
     try {
       const hash = await bcrypt.hash(data.password, saltOrRounds);
       data.password = hash;
+      const userAlreadyExists = await this.usersService.findByEmail(data.email);
+      if (userAlreadyExists){
+        throw new ConflictException('User already exists');
+      }
       const user = await this.prisma.user.create({
         data,
       });
-      console.log(user)
+      
       const user_roles = await this.getUserRole(user.id)
       const payload = { sub: user.id, email: user.email , roles: user_roles};
       const token = await this.jwtService.signAsync(payload)

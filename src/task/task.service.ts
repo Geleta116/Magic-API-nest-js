@@ -15,7 +15,6 @@ export class TaskService {
 
   async create(creator_id: number, createTaskDto: CreateTaskDto): Promise<Task> {
     try {
-
       const createdTask = await this.prisma.task.create({
         data: {
           ...createTaskDto,
@@ -24,7 +23,6 @@ export class TaskService {
               id: creator_id
             }
           }
-
         }
       })
       return createdTask;

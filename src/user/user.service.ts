@@ -114,7 +114,7 @@ export class UserService {
   }
 
   async remove(id: number): Promise<void> {
-   
+
     try {
 
       const existingUser = await this.findOne(id);
@@ -124,6 +124,33 @@ export class UserService {
 
       await this.prisma.user.delete({
         where: { id: id }
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async promoteToAdmin(id: number): Promise<void> {
+
+    try {
+
+      const existingUser = await this.findOne(id);
+      if (!existingUser) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+
+      const adminRole = await this.prisma.role.findUnique({
+        where: { name: 'admin' },
+      });
+
+      if (!adminRole) {
+        throw new NotFoundException(`Admin role not found`);
+      }
+      await this.prisma.userRole.create({
+        data: {
+          user_id: id,
+          role_id: adminRole.id,
+        },
       });
     } catch (error) {
       throw error;

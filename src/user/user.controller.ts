@@ -48,4 +48,12 @@ export class UserController {
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
   }
+
+
+  @Post('/promote/:id')
+  @Roles(Role.Admin)
+  @UseGuards(RolesGuard)
+  promoteToAdmin(@Param('id') id: string) {
+    return this.userService.promoteToAdmin(+id);
+  }
 }

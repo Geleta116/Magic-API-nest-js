@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { PrismaService } from '../prisma.service';
@@ -15,6 +15,8 @@ export class TaskService {
 
   async create(creator_id: number, createTaskDto: CreateTaskDto): Promise<Task> {
     try {
+      console.log("dto", createTaskDto)
+      console.log(creator_id)
       const createdTask = await this.prisma.task.create({
         data: {
           ...createTaskDto,
@@ -39,11 +41,16 @@ export class TaskService {
 
   async findOne(id: number): Promise<Task | null> {
     try {
-      return await this.prisma.task.findFirst({
+      const task = await this.prisma.task.findFirst({
         where: {
           id: id
         }
       })
+
+      if (!task){
+        throw new BadRequestException("task doesn't exist")
+      }
+      return task
     } catch (error) {
       throw error
     }
@@ -51,6 +58,15 @@ export class TaskService {
 
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task | null> {
     try {
+      const taskToBeUpdated =  await this.prisma.task.findFirst({
+        where:{
+          id: id
+        }
+      });
+
+      if (!taskToBeUpdated){
+        throw new BadRequestException("Task doesn't exist")
+      }
       const updatedTask = await this.prisma.task.update({
         where: {
           id: id

@@ -85,5 +85,4 @@ export class AuthService {
       throw error;
     }
   }
-  
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Req, UsePipes, Put } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto, createTaskSchema } from './dto/create-task.dto';
 import { UpdateTaskDto, UpdateTaskSchema } from './dto/update-task.dto';
@@ -13,7 +13,7 @@ export class TaskController {
   @UsePipes(new ZodValidationPipe(createTaskSchema))
   async create(@Body() createTaskDto: CreateTaskDto, @Req() request: Request) {
     const user = request['user']; 
-    const creator_id = user.id;
+    const creator_id = user.sub;
     return this.taskService.create(creator_id, createTaskDto);
   }
 
@@ -27,7 +27,7 @@ export class TaskController {
     return this.taskService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @UsePipes(new ZodValidationPipe(UpdateTaskSchema))
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
     return this.taskService.update(+id, updateTaskDto);
